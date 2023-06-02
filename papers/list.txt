@@ -1,0 +1,2 @@
+1. In Search of an Understandable Consensus Algorithm
+2. Finding a needle in Haystack: Facebook’s photo storage
