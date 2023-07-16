@@ -1,5 +1,7 @@
 package main
 
-func main() {
+import "github.com/ADA-GWU/guidedresearchproject-hnijad/internal/sos"
 
+func main() {
+	sos.Run()
 }
