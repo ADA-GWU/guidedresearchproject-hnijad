@@ -23,6 +23,7 @@ Key objectives of the project are following
 To start the application run the following command.
 
 ```shell
+cd src/ 
 go run src/cmd/main.go
 ```
 
