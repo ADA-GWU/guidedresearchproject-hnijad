@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 	log "github.com/google/logger"
+	"os"
+	"strconv"
+	"strings"
 )
 
 type Storage struct {
@@ -12,9 +15,36 @@ type Storage struct {
 }
 
 func NewStorage(dir string) *Storage {
+
+	volumes, err := os.ReadDir(dir)
+
+	if err != nil {
+		log.Errorln("Could not read the volumes in storage")
+		return nil
+	}
+
+	volumeMap := make(map[int]*Volume)
+
+	// do i need to open 'dataFile' or 'file' is already open in correct mod?
+	for _, file := range volumes {
+		if strings.HasSuffix(file.Name(), ".data") {
+			id, _ := strconv.Atoi(strings.Split(file.Name(), ".")[0])
+			dataFile, err := os.OpenFile(dir+"/"+file.Name(), os.O_RDWR|os.O_CREATE, 0644)
+			if err != nil {
+				log.Errorln("Error opening volume ", err)
+				continue
+			}
+			volumeMap[id] = &Volume{
+				ID:       id,
+				Dir:      dir,
+				dataFile: dataFile,
+			}
+		}
+	}
+	log.Infof("File is loaded %d", len(volumeMap))
 	return &Storage{
 		Dir:     dir,
-		Volumes: make(map[int]*Volume),
+		Volumes: volumeMap,
 	}
 }
 
