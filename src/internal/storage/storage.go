@@ -3,9 +3,7 @@ package storage
 import (
 	"errors"
 	"fmt"
-	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/util"
 	log "github.com/google/logger"
-	"os"
 )
 
 type Storage struct {
@@ -26,66 +24,36 @@ func (s *Storage) CreateNewVolume(id int) error {
 		log.Warningf("Volume with id=%d exists in volume map", id)
 		return errors.New(fmt.Sprintf("volume already exists with id %d", id))
 	}
-	if err := CreateVolume(id, s.Dir); err != nil {
+	volume, err := CreateNewVolume(id, s.Dir)
+	if err != nil {
 		return err
 	}
-	s.Volumes[id] = &Volume{id}
+	s.Volumes[id] = volume
 	return nil
 }
 
 func (s *Storage) WriteNeedle(volumeId int, needle *Needle) error {
-	file, err := os.OpenFile("tmp/"+fmt.Sprintf("%d.data", volumeId), os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
-	if err != nil {
-		log.Errorln("Could not open the volume ", volumeId)
-		return err
+	if _, ok := s.Volumes[volumeId]; !ok {
+		log.Warningf("Volume with id=%d does not exist in volume map", volumeId)
+		return errors.New(fmt.Sprintf("volume  does not exist with id %d", volumeId))
 	}
-	defer file.Close()
-	bytes := needle.MapNeedleToBytes()
-	_, err = file.Write(bytes)
+	err := s.Volumes[volumeId].WriteNeedle(needle)
 	if err != nil {
-		log.Errorln("Error writing to file:", err)
+		log.Errorln("Could not write the needle with id %d", needle.Id)
 		return err
 	}
 	return nil
 }
 
 func (s *Storage) ReadNeedle(volumeId int, needleId int) (*Needle, error) {
-	volume, err := os.Open("tmp/" + fmt.Sprintf("%d.data", volumeId))
+	if _, ok := s.Volumes[volumeId]; !ok {
+		log.Warningf("Volume with id=%d does not exist in volume map", volumeId)
+		return nil, errors.New(fmt.Sprintf("volume  does not exist with id %d", volumeId))
+	}
+	needle, err := s.Volumes[volumeId].ReadNeedle(needleId)
 	if err != nil {
-		log.Errorln("Could not open the volume ", volumeId)
+		log.Errorln("Could not read the needle with id %d", needleId)
 		return nil, err
 	}
-	defer volume.Close()
-
-	needles := make([]Needle, 0)
-	offset := int64(0)
-	totalSizeByte := make([]byte, 4)
-
-	for {
-		at, err := volume.ReadAt(totalSizeByte, offset)
-		if err != nil {
-			log.Errorln("Error while reading from the offset", err.Error())
-			break
-		}
-		offset += int64(at)
-
-		needle := Needle{}
-		needle.TotalSize = util.BytesToUint(totalSizeByte)
-
-		leftBytes := needle.TotalSize - 4
-		data := make([]byte, leftBytes)
-
-		at, err = volume.ReadAt(data, offset)
-		if err != nil {
-			log.Errorln("Error while reading from the offset", err.Error())
-			break
-		}
-
-		needle = MapBytesToNeedle(data)
-
-		needles = append(needles, needle)
-		offset += int64(at)
-	}
-
-	return &needles[0], nil
+	return needle, err
 }
