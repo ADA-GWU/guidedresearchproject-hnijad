@@ -14,6 +14,7 @@ type Volume struct {
 	Dir       string
 	dataFile  *os.File
 	NeedleMap map[int]*NeedleInfo
+	UsedSpace int64
 	mu        sync.Mutex
 }
 
@@ -37,16 +38,29 @@ func CreateNewVolume(id int, dir string) (*Volume, error) {
 		return nil, err
 	}
 	volume := &Volume{
-		ID:       id,
-		Dir:      dir,
-		dataFile: file,
+		ID:        id,
+		Dir:       dir,
+		dataFile:  file,
+		NeedleMap: make(map[int]*NeedleInfo),
+		UsedSpace: 0,
 	}
 	return volume, nil
 }
 
 func (v *Volume) WriteNeedle(needle *Needle) error {
 	bytes := needle.MapNeedleToBytes()
-	_, err := v.dataFile.Write(bytes)
+	v.mu.Lock()
+	defer v.mu.Unlock()
+	sz, err := v.dataFile.Write(bytes)
+	if err == nil {
+		v.NeedleMap[int(needle.Id)] = &NeedleInfo{
+			Offset: v.UsedSpace,
+			Size:   sz,
+			Name:   string(needle.Name),
+		}
+		v.UsedSpace += int64(sz)
+		log.Infof("id = %v, offset = %v ", needle.Id, v.NeedleMap[int(needle.Id)].Name)
+	}
 	return err
 }
 
@@ -83,6 +97,7 @@ func (v *Volume) syncNeedleMap() {
 			Name:   string(needle.Name),
 		}
 	}
+	v.UsedSpace = offset
 	log.Infoln("Synced the needle map")
 }
 
