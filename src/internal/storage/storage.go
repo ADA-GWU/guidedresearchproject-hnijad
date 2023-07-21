@@ -3,7 +3,7 @@ package storage
 import (
 	"errors"
 	"fmt"
-	log "github.com/google/logger"
+	log "github.com/sirupsen/logrus"
 	"os"
 	"strconv"
 	"strings"
@@ -34,11 +34,19 @@ func NewStorage(dir string) *Storage {
 				log.Errorln("Error opening volume ", err)
 				continue
 			}
-			volumeMap[id] = &Volume{
-				ID:       id,
-				Dir:      dir,
-				dataFile: dataFile,
+			volume := &Volume{
+				ID:        id,
+				Dir:       dir,
+				dataFile:  dataFile,
+				NeedleMap: make(map[int]*NeedleInfo),
 			}
+			volume.syncNeedleMap()
+
+			//for k, v := range volume.NeedleMap {
+			//	fmt.Println("K = ", k, "v = ", v)
+			//}
+
+			volumeMap[id] = volume
 		}
 	}
 	log.Infof("File is loaded %d", len(volumeMap))
@@ -80,7 +88,8 @@ func (s *Storage) ReadNeedle(volumeId int, needleId int) (*Needle, error) {
 		log.Warningf("Volume with id=%d does not exist in volume map", volumeId)
 		return nil, errors.New(fmt.Sprintf("volume  does not exist with id %d", volumeId))
 	}
-	needle, err := s.Volumes[volumeId].ReadNeedle(needleId)
+	//needle, err := s.Volumes[volumeId].ReadNeedle(needleId)
+	needle, err := s.Volumes[volumeId].FindNeedle(needleId)
 	if err != nil {
 		log.Errorln("Could not read the needle with id %d", needleId)
 		return nil, err
