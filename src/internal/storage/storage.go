@@ -39,6 +39,7 @@ func NewStorage(dir string) *Storage {
 				Dir:       dir,
 				dataFile:  dataFile,
 				NeedleMap: make(map[int]*NeedleInfo),
+				UsedSpace: 0,
 			}
 			volume.syncNeedleMap()
 
