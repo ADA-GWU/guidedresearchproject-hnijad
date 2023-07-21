@@ -3,8 +3,8 @@ module github.com/ADA-GWU/guidedresearchproject-hnijad
 go 1.20
 
 require (
-	github.com/google/logger v1.1.1
 	github.com/labstack/echo/v4 v4.11.0
+	github.com/sirupsen/logrus v1.9.3
 )
 
 require (

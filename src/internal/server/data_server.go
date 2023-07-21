@@ -2,7 +2,7 @@ package server
 
 import (
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/storage"
-	log "github.com/google/logger"
+	log "github.com/sirupsen/logrus"
 	"mime/multipart"
 	"net/http"
 	"strconv"
