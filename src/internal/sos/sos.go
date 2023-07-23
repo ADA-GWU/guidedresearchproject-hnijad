@@ -29,17 +29,17 @@ func formatFilePath(path string) string {
 	return arr[len(arr)-1]
 }
 
-func Run() {
+func RunDataNode(volDir, port, primaryNode, noteId string) {
 	e := echo.New()
 	e.HideBanner = true
 
-	storage := storage2.NewStorage("tmp")
+	storage := storage2.NewStorage(volDir)
 
-	dataServer := server.NewDataServer("dnode_1", storage)
+	dataServer := server.NewDataServer(noteId, storage)
 
 	handler.AddDataRoutes(e, dataServer)
 
-	if err := e.Start(":8080"); err != http.ErrServerClosed {
+	if err := e.Start(":" + port); err != http.ErrServerClosed {
 		log.Infoln("Error when starting http server", err.Error())
 	}
 }
