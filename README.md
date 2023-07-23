@@ -20,12 +20,18 @@ Key objectives of the project are following
 * Minimizing the metadata operations on small files, thus improving the read performance of the system
 
 ## Install
-To start the application run the following command.
+To build the application run the following command.
 
 ```shell
 cd src/ 
-go run src/cmd/main.go
+go build src/sos.go
 ```
+
+To start to data node run the following command
+```shell
+./sos data --vol_dir="tmp/node1" --primary_node="localhost:1212" --port="8080" --node_id="1"
+```
+
 
 ## Usage
 
@@ -33,8 +39,9 @@ go run src/cmd/main.go
 
 ## Dependencies
 This project uses the following libraries.
-- [Golang logger by Google](https://github.com/google/logger)
+- [Logrus logging library](https://github.com/sirupsen/logrus)
 - [Echo library for rest api](https://echo.labstack.com/)
+- [Cobra library to build cli](https://github.com/spf13/cobra)
 
 ## References
 - [Finding a needle in Haystack: Facebook’s photo storage](papers/Haystack.pdf)
