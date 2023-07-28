@@ -1,10 +1,12 @@
 package sos
 
 import (
+	"errors"
 	"fmt"
+	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/config"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/handler"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/server"
-	storage2 "github.com/ADA-GWU/guidedresearchproject-hnijad/internal/storage"
+	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/storage"
 	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
 	"net/http"
@@ -15,7 +17,7 @@ import (
 func init() {
 	log.SetReportCaller(true)
 	formatter := &log.TextFormatter{
-		TimestampFormat:        "02-01-2006 15:04:05", // the "time" field configuratiom
+		TimestampFormat:        "02-01-2006 15:04:05", // the "time" field configuration
 		FullTimestamp:          true,
 		DisableLevelTruncation: true, // log level field configuration
 		CallerPrettyfier: func(f *runtime.Frame) (string, string) {
@@ -29,17 +31,30 @@ func formatFilePath(path string) string {
 	return arr[len(arr)-1]
 }
 
-func RunDataNode(volDir, port, primaryNode, noteId string) {
+func RunDataNode(params *config.DataNodeParams) {
 	e := echo.New()
 	e.HideBanner = true
 
-	storage := storage2.NewStorage(volDir)
+	dataStorage := storage.NewStorage(params.VolDir)
 
-	dataServer := server.NewDataServer(noteId, storage)
+	dataServer := server.NewDataServer(params.NodeId, dataStorage)
 
 	handler.AddDataRoutes(e, dataServer)
 
-	if err := e.Start(":" + port); err != http.ErrServerClosed {
-		log.Infoln("Error when starting http server", err.Error())
+	if err := e.Start(":" + params.HttpPort); !errors.Is(err, http.ErrServerClosed) {
+		log.Infoln("Error when starting data node http server", err.Error())
+	}
+}
+
+func RunPrimaryNode(params *config.PrimaryNodeParams) {
+	e := echo.New()
+	e.HideBanner = true
+
+	primaryServer := server.NewPrimaryServer()
+
+	handler.AddPrimaryRoutes(e, primaryServer)
+
+	if err := e.Start(":" + params.HttpPort); !errors.Is(err, http.ErrServerClosed) {
+		log.Infoln("Error when starting primary node http server", err.Error())
 	}
 }
