@@ -3,6 +3,7 @@ package sos
 import (
 	"errors"
 	"fmt"
+	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/client"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/config"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/handler"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/server"
@@ -37,7 +38,9 @@ func RunDataNode(params *config.DataNodeParams) {
 
 	dataStorage := storage.NewStorage(params.VolDir)
 
-	dataServer := server.NewDataServer(params.NodeId, dataStorage)
+	dataServer := server.NewDataServer(params.NodeId, dataStorage, client.NewMasterGrpcClient(params.PrimaryNodeUrl))
+
+	go dataServer.StartHeartBeat()
 
 	handler.AddDataRoutes(e, dataServer)
 

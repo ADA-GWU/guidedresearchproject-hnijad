@@ -1,18 +1,21 @@
 package server
 
 import (
+	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/client"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/storage"
 	log "github.com/sirupsen/logrus"
 	"mime/multipart"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 	"unsafe"
 )
 
 type DataServer struct {
-	ID      string
-	Storage *storage.Storage
+	ID                string
+	Storage           *storage.Storage
+	PrimaryGrpcClient *client.PrimaryGrpcClientWrapper
 }
 
 func (ds *DataServer) CreateNewVolume(id int) error {
@@ -66,9 +69,24 @@ func (ds *DataServer) ReadObject(fid string) (*storage.Needle, error) {
 	return ds.Storage.ReadNeedle(vId, oId)
 }
 
-func NewDataServer(id string, store *storage.Storage) *DataServer {
+func NewDataServer(id string, store *storage.Storage, primaryGrpcClient *client.PrimaryGrpcClientWrapper) *DataServer {
 	return &DataServer{
-		ID:      id,
-		Storage: store,
+		ID:                id,
+		Storage:           store,
+		PrimaryGrpcClient: primaryGrpcClient,
 	}
+}
+
+func (ds *DataServer) StartHeartBeat() {
+	log.Infoln("Starting the heartbeat")
+	ticker := time.NewTicker(1000 * time.Millisecond)
+
+	go func() {
+		for {
+			select {
+			case ticker := <-ticker.C:
+				log.Infoln("Heartbeat at", ticker)
+			}
+		}
+	}()
 }
