@@ -54,6 +54,7 @@ This project uses the following libraries.
 - [CFS: A Distributed File System for Large Scale Container Platforms](papers/1911.03001.pdf)
 - [Echo library](https://echo.labstack.com/docs)
 - [Heartbeats in Golang](https://medium.com/geekculture/heartbeats-in-golang-1a12c4c366f)
+- [GRPC Docs](https://grpc.io/docs/languages/go/basics/)
 
 ## License
 The project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

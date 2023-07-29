@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "primary/";
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.heartbeat";
+option java_outer_classname = "DataNodeProto";
+
+package primary;
+
+service DataNode {
+  rpc CreateVolume(VolumeCreateRequest) returns (VolumeCreateResponse){}
+}
+
+message VolumeCreateRequest {
+  int32 volume_id = 1;
+}
+
+message VolumeCreateResponse {
+  string status = 1;
+  string message = 2;
+}

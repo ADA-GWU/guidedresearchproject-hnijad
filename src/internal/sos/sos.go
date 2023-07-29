@@ -46,6 +46,8 @@ func RunDataNode(params *config.DataNodeParams) {
 
 	handler.AddDataRoutes(e, dataServer)
 
+	go server.StartDataNodeGrpcServer(dataServer)
+
 	if err := e.Start(":" + params.HttpPort); !errors.Is(err, http.ErrServerClosed) {
 		log.Infoln("Error when starting data node http server", err.Error())
 	}

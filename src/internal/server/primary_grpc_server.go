@@ -8,12 +8,35 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"net"
+	"time"
 )
 
 func (s *PrimaryServer) HeartBeat(context context.Context, request *pb.DataNodeInfo) (*emptypb.Empty, error) {
-	log.Info("Got heartbeat from the node", request.Id)
+	//log.Info("Got heartbeat from the node", request.Id)
 	_ = s.ClusterInfo.AddNewDataNode(request)
 	return &emptypb.Empty{}, nil
+}
+
+func (s *PrimaryServer) VolumeWatcher() {
+
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			log.Println("Starting volume checking...")
+			s.manage()
+			log.Println("Finished volume checking")
+
+		}
+	}
+}
+
+func (s *PrimaryServer) manage() {
+	for key, val := range s.ClusterInfo.Nodes {
+		log.Info("key = ", key, "val = ", val)
+	}
 }
 
 func StartPrimaryNodeGrpcServer(primaryServer *PrimaryServer) {
