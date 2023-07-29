@@ -59,7 +59,9 @@ func RunPrimaryNode(params *config.PrimaryNodeParams) {
 		Nodes: make(map[string]*pb.DataNodeInfo),
 	}
 
-	primaryServer := server.NewPrimaryServer(params, clusterInfo)
+	state := server.NewPrimaryNodeState(params.StateFilePath)
+
+	primaryServer := server.NewPrimaryServer(params, clusterInfo, state)
 
 	handler.AddPrimaryRoutes(e, primaryServer)
 

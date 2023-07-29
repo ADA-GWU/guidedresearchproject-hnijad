@@ -9,15 +9,17 @@ type PrimaryServer struct {
 	pb.UnimplementedPrimaryNodeServer
 	Params      *config.PrimaryNodeParams
 	ClusterInfo *ClusterInfo
+	State       *PrimaryNodeState
 }
 
 func (s *PrimaryServer) GetClusterInfo() *ClusterInfo {
 	return s.ClusterInfo
 }
 
-func NewPrimaryServer(params *config.PrimaryNodeParams, info *ClusterInfo) *PrimaryServer {
+func NewPrimaryServer(params *config.PrimaryNodeParams, info *ClusterInfo, state *PrimaryNodeState) *PrimaryServer {
 	return &PrimaryServer{
 		Params:      params,
 		ClusterInfo: info,
+		State:       state,
 	}
 }
