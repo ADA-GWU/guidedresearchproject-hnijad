@@ -23,3 +23,31 @@ func (c *ClusterInfo) AddNewDataNode(info *pb.DataNodeInfo) error {
 
 	return nil
 }
+
+type VolumeResult struct {
+	Id          int32  `json:"id"`
+	DataNodeUrl string `json:"data_node_url"`
+}
+
+func (c *ClusterInfo) FindVolumeWithMaxAvailableSpace() *VolumeResult {
+	log.Infoln("FindVolumeWithMaxAvailableSpace start")
+	freeSpace := int64(-1)
+	volumeID := int32(-1)
+	dataNodeUrl := ""
+
+	for _, val := range c.Nodes {
+		for _, volume := range val.Volumes {
+			if volume.FreeSpace > freeSpace {
+				freeSpace = volume.FreeSpace
+				volumeID = volume.Id
+				dataNodeUrl = val.Address
+			}
+		}
+	}
+	log.Infoln("FindVolumeWithMaxAvailableSpace end")
+
+	return &VolumeResult{
+		DataNodeUrl: dataNodeUrl,
+		Id:          volumeID,
+	}
+}
