@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/client"
 	pb "github.com/ADA-GWU/guidedresearchproject-hnijad/internal/proto/primary"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -8,7 +9,8 @@ import (
 )
 
 type ClusterInfo struct {
-	Nodes map[string]*pb.DataNodeInfo `json:"nodes"`
+	Nodes               map[string]*pb.DataNodeInfo              `json:"nodes"`
+	DataNodeGrpcClients map[string]*client.DataGrpcClientWrapper `json:"-"`
 }
 
 func (c *ClusterInfo) AddNewDataNode(info *pb.DataNodeInfo) error {

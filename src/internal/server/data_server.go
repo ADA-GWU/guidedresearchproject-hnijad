@@ -16,6 +16,7 @@ import (
 )
 
 type DataServer struct {
+	pb.UnimplementedDataNodeServer
 	ID                string
 	Storage           *storage.Storage
 	PrimaryGrpcClient *client.PrimaryGrpcClientWrapper

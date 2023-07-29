@@ -28,9 +28,11 @@ func (s *PrimaryServer) FindDataNode() (*api.VolumeRequest, error) {
 }
 
 func NewPrimaryServer(params *config.PrimaryNodeParams, info *ClusterInfo, state *PrimaryNodeState) *PrimaryServer {
-	return &PrimaryServer{
+	server := &PrimaryServer{
 		Params:      params,
 		ClusterInfo: info,
 		State:       state,
 	}
+	go server.VolumeWatcher()
+	return server
 }
