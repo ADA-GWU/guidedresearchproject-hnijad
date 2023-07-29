@@ -24,14 +24,10 @@ func NewMasterGrpcClient(primaryUrl string) *PrimaryGrpcClientWrapper {
 	}
 }
 
-func (s *PrimaryGrpcClientWrapper) HeartBeat(message string) {
+func (s *PrimaryGrpcClientWrapper) HeartBeat(info *pb.DataNodeInfo) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
-	_, err := s.masterGrpcClient.HeartBeat(ctx,
-		&pb.DataNodeInfo{
-			Id: message,
-		},
-	)
+	_, err := s.masterGrpcClient.HeartBeat(ctx, info)
 	if err != nil {
 		log.Fatalf("could not heartbeat: %v", err)
 	}

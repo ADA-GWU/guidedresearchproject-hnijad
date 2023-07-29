@@ -1,8 +1,10 @@
 package server
 
 import (
+	"fmt"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/client"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/config"
+	pb "github.com/ADA-GWU/guidedresearchproject-hnijad/internal/proto/primary"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/storage"
 	log "github.com/sirupsen/logrus"
 	"mime/multipart"
@@ -89,8 +91,27 @@ func (ds *DataServer) StartHeartBeat() {
 			select {
 			case ticker := <-ticker.C:
 				log.Infoln("Heartbeat at", ticker)
-				ds.PrimaryGrpcClient.HeartBeat(ds.Params.NodeId)
+				info := &pb.DataNodeInfo{
+					Id:      ds.ID,
+					Address: fmt.Sprintf("localhost:%v", ds.Params.HttpPort),
+					Volumes: asVolumeList(ds.Storage.Volumes),
+				}
+				ds.PrimaryGrpcClient.HeartBeat(info)
 			}
 		}
 	}()
+}
+
+func asVolumeList(volumeMap map[int]*storage.Volume) []*pb.Volume {
+	volumes := make([]*pb.Volume, 0)
+	for _, value := range volumeMap {
+		volume := &pb.Volume{
+			Id:        int32(value.ID),
+			Dir:       value.Dir,
+			UsedSpace: 12,
+			FreeSpace: 12,
+		}
+		volumes = append(volumes, volume)
+	}
+	return volumes
 }

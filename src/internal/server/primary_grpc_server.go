@@ -12,6 +12,7 @@ import (
 
 func (s *PrimaryServer) HeartBeat(context context.Context, request *pb.DataNodeInfo) (*emptypb.Empty, error) {
 	log.Info("Got heartbeat from the node", request.Id)
+	_ = s.ClusterInfo.AddNewDataNode(request)
 	return &emptypb.Empty{}, nil
 }
 
