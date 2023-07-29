@@ -23,13 +23,18 @@ Key objectives of the project are following
 To build the application run the following command.
 
 ```shell
-cd src/ 
 go build src/sos.go
 ```
 
+To start the primary node run the following command
+```shell
+./sos primary --port=8080 --grpc_port=1234
+```
+
+
 To start to data node run the following command
 ```shell
-./sos data --vol_dir="tmp/node1" --primary_node="localhost:1212" --port="8080" --node_id="1"
+./sos data --vol_dir="tmp/node1" --primary_node="localhost:1212" --port="8081" --node_id="1"
 ```
 
 
