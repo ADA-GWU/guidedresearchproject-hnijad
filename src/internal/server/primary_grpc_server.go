@@ -15,15 +15,15 @@ func (s *PrimaryServer) HeartBeat(context context.Context, request *pb.DataNodeI
 	return &emptypb.Empty{}, nil
 }
 
-func StartPrimaryNodeGrpcServer(grpcPort string) {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", grpcPort))
+func StartPrimaryNodeGrpcServer(primaryServer *PrimaryServer) {
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", primaryServer.Params.GRPCPort))
 	if err != nil {
 		log.Info("error happened", err.Error())
 		return
 	}
 	s := grpc.NewServer()
-	pb.RegisterPrimaryNodeServer(s, &PrimaryServer{}) // add the same primary node reference
-	log.Infoln("Starting the grpc server at", grpcPort)
+	pb.RegisterPrimaryNodeServer(s, primaryServer) // add the same primary node reference
+	log.Infoln("Starting the grpc server at", primaryServer.Params.GRPCPort)
 	err = s.Serve(lis)
 	if err != nil {
 		log.Infoln("error happened", err.Error())
