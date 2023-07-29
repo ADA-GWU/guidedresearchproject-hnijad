@@ -38,7 +38,8 @@ func RunDataNode(params *config.DataNodeParams) {
 
 	dataStorage := storage.NewStorage(params.VolDir)
 
-	dataServer := server.NewDataServer(params.NodeId, dataStorage, client.NewMasterGrpcClient(params.PrimaryNodeUrl))
+	// TODO ID  is already in params
+	dataServer := server.NewDataServer(params.NodeId, dataStorage, client.NewMasterGrpcClient(params.PrimaryNodeUrl), params)
 
 	go dataServer.StartHeartBeat()
 
@@ -53,9 +54,11 @@ func RunPrimaryNode(params *config.PrimaryNodeParams) {
 	e := echo.New()
 	e.HideBanner = true
 
-	primaryServer := server.NewPrimaryServer()
+	primaryServer := server.NewPrimaryServer(params)
 
 	handler.AddPrimaryRoutes(e, primaryServer)
+
+	go server.StartPrimaryNodeGrpcServer(primaryServer)
 
 	if err := e.Start(":" + params.HttpPort); !errors.Is(err, http.ErrServerClosed) {
 		log.Infoln("Error when starting primary node http server", err.Error())

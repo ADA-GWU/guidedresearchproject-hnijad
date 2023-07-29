@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/client"
+	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/config"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/storage"
 	log "github.com/sirupsen/logrus"
 	"mime/multipart"
@@ -16,6 +17,7 @@ type DataServer struct {
 	ID                string
 	Storage           *storage.Storage
 	PrimaryGrpcClient *client.PrimaryGrpcClientWrapper
+	Params            *config.DataNodeParams
 }
 
 func (ds *DataServer) CreateNewVolume(id int) error {
@@ -69,11 +71,12 @@ func (ds *DataServer) ReadObject(fid string) (*storage.Needle, error) {
 	return ds.Storage.ReadNeedle(vId, oId)
 }
 
-func NewDataServer(id string, store *storage.Storage, primaryGrpcClient *client.PrimaryGrpcClientWrapper) *DataServer {
+func NewDataServer(id string, store *storage.Storage, primaryGrpcClient *client.PrimaryGrpcClientWrapper, params *config.DataNodeParams) *DataServer {
 	return &DataServer{
 		ID:                id,
 		Storage:           store,
 		PrimaryGrpcClient: primaryGrpcClient,
+		Params:            params,
 	}
 }
 
@@ -86,6 +89,7 @@ func (ds *DataServer) StartHeartBeat() {
 			select {
 			case ticker := <-ticker.C:
 				log.Infoln("Heartbeat at", ticker)
+				ds.PrimaryGrpcClient.HeartBeat(ds.Params.NodeId)
 			}
 		}
 	}()
