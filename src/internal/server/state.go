@@ -76,7 +76,7 @@ func (s *PrimaryNodeState) saveToDisk() error {
 	buffer.Write(util.UintToBytes(s.MaxVolumeId))
 	buffer.Write(util.UintToBytes(s.LastObjectId))
 
-	_, err := s.stateFile.Write(buffer.Bytes())
+	_, err := s.stateFile.WriteAt(buffer.Bytes(), 0)
 
 	if err != nil {
 		log.Fatalln("Could not save the primary node state")
@@ -94,7 +94,7 @@ func (s *PrimaryNodeState) NextId() (uint32, error) {
 	buffer.Write(util.UintToBytes(s.MaxVolumeId))
 	buffer.Write(util.UintToBytes(s.LastObjectId))
 
-	_, err := s.stateFile.Write(buffer.Bytes())
+	_, err := s.stateFile.WriteAt(buffer.Bytes(), 0)
 
 	if err != nil {
 		log.Fatalln("Could not save the primary node state")
