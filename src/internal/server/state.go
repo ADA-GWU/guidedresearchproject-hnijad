@@ -84,3 +84,22 @@ func (s *PrimaryNodeState) saveToDisk() error {
 	}
 	return nil
 }
+
+func (s *PrimaryNodeState) NextId() (uint32, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.LastObjectId = s.LastObjectId + 1
+
+	buffer := bytes.Buffer{}
+	buffer.Write(util.UintToBytes(s.MaxVolumeId))
+	buffer.Write(util.UintToBytes(s.LastObjectId))
+
+	_, err := s.stateFile.Write(buffer.Bytes())
+
+	if err != nil {
+		log.Fatalln("Could not save the primary node state")
+		return 0, err
+	}
+
+	return s.LastObjectId, nil
+}
