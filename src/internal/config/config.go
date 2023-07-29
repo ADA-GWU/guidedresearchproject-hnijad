@@ -9,6 +9,7 @@ type DataNodeParams struct {
 }
 
 type PrimaryNodeParams struct {
-	HttpPort string
-	GRPCPort string
+	HttpPort      string
+	GRPCPort      string
+	StateFilePath string
 }
