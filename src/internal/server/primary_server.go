@@ -7,11 +7,17 @@ import (
 
 type PrimaryServer struct {
 	pb.UnimplementedPrimaryNodeServer
-	Params *config.PrimaryNodeParams
+	Params      *config.PrimaryNodeParams
+	ClusterInfo *ClusterInfo
 }
 
-func NewPrimaryServer(params *config.PrimaryNodeParams) *PrimaryServer {
+func (s *PrimaryServer) GetClusterInfo() *ClusterInfo {
+	return s.ClusterInfo
+}
+
+func NewPrimaryServer(params *config.PrimaryNodeParams, info *ClusterInfo) *PrimaryServer {
 	return &PrimaryServer{
-		Params: params,
+		Params:      params,
+		ClusterInfo: info,
 	}
 }

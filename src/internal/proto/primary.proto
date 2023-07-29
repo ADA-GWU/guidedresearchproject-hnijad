@@ -23,7 +23,7 @@ message DataNodeInfo {
 }
 
 message Volume {
-  string id = 1;
+  int32 id = 1;
   string dir = 2;
   int64 used_space = 3;
   int64 free_space = 4;

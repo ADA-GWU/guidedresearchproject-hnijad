@@ -6,6 +6,7 @@ import (
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/client"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/config"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/handler"
+	pb "github.com/ADA-GWU/guidedresearchproject-hnijad/internal/proto/primary"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/server"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/storage"
 	"github.com/labstack/echo/v4"
@@ -54,7 +55,11 @@ func RunPrimaryNode(params *config.PrimaryNodeParams) {
 	e := echo.New()
 	e.HideBanner = true
 
-	primaryServer := server.NewPrimaryServer(params)
+	clusterInfo := &server.ClusterInfo{
+		Nodes: make(map[string]*pb.DataNodeInfo),
+	}
+
+	primaryServer := server.NewPrimaryServer(params, clusterInfo)
 
 	handler.AddPrimaryRoutes(e, primaryServer)
 
