@@ -58,7 +58,8 @@ func RunPrimaryNode(params *config.PrimaryNodeParams) {
 	e.HideBanner = true
 
 	clusterInfo := &server.ClusterInfo{
-		Nodes: make(map[string]*pb.DataNodeInfo),
+		Nodes:               make(map[string]*pb.DataNodeInfo),
+		DataNodeGrpcClients: make(map[string]*client.DataGrpcClientWrapper),
 	}
 
 	state := server.NewPrimaryNodeState(params.StateFilePath)

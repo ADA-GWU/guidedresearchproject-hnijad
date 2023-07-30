@@ -1,9 +1,11 @@
 package client
 
 import (
+	"context"
 	pb "github.com/ADA-GWU/guidedresearchproject-hnijad/internal/proto/primary"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"time"
 )
 
 type DataGrpcClientWrapper struct {
@@ -19,4 +21,12 @@ func NewDataGrpcClient(dataNodeUrl string) *DataGrpcClientWrapper {
 	return &DataGrpcClientWrapper{
 		dataGrpcClient: c,
 	}
+}
+
+func (c *DataGrpcClientWrapper) CreateVolume(request *pb.VolumeCreateRequest) (*pb.VolumeCreateResponse, error) {
+	//TODO check method signature
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	resp, err := c.dataGrpcClient.CreateVolume(ctx, request)
+	return resp, err
 }
