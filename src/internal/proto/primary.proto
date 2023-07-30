@@ -20,6 +20,8 @@ message DataNodeInfo {
   google.protobuf.Timestamp last_heart_beat_at = 2;
   repeated Volume volumes = 3;
   string address = 4;
+  string http_port = 5;
+  string grpc_port = 6;
 }
 
 message Volume {

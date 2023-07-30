@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/client"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/config"
 	pb "github.com/ADA-GWU/guidedresearchproject-hnijad/internal/proto/primary"
@@ -93,9 +92,11 @@ func (ds *DataServer) StartHeartBeat() {
 			case ticker := <-ticker.C:
 				log.Infoln("Heartbeat at", ticker)
 				info := &pb.DataNodeInfo{
-					Id:      ds.ID,
-					Address: fmt.Sprintf("localhost:%v", ds.Params.HttpPort),
-					Volumes: asVolumeList(ds.Storage.Volumes),
+					Id:       ds.ID,
+					Address:  "localhost",
+					Volumes:  asVolumeList(ds.Storage.Volumes),
+					HttpPort: ds.Params.HttpPort,
+					GrpcPort: ds.Params.GRPCPort,
 				}
 				ds.PrimaryGrpcClient.HeartBeat(info)
 			}

@@ -12,7 +12,7 @@ import (
 )
 
 func (s *PrimaryServer) HeartBeat(context context.Context, request *pb.DataNodeInfo) (*emptypb.Empty, error) {
-	//log.Info("Got heartbeat from the node", request.Id)
+	log.Info("Got heartbeat from the node", request.Id)
 	_ = s.ClusterInfo.AddNewDataNode(request)
 	return &emptypb.Empty{}, nil
 }
@@ -34,8 +34,17 @@ func (s *PrimaryServer) VolumeWatcher() {
 }
 
 func (s *PrimaryServer) manage() {
+	// Rules for creating new volumes
 	for key, val := range s.ClusterInfo.Nodes {
 		log.Info("key = ", key, "val = ", val)
+		if len(val.Volumes) == 0 { // Rule 1, if no volume exists on data node, create one
+			volumeId, _ := s.State.NextVolumeId()
+			client, _ := s.ClusterInfo.GetDataNodeGrpcClient(key, val.Address+":"+val.GrpcPort) // TODO change address to grpc
+			_, err := client.CreateVolume(&pb.VolumeCreateRequest{VolumeId: int32(volumeId)})   // TODO change types to avoid type conversions
+			if err != nil {
+				log.Errorf("Attempt to create new volume failed on %v with error %v", key, err.Error())
+			}
+		}
 	}
 }
 

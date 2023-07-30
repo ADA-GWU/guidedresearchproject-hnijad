@@ -13,6 +13,15 @@ type ClusterInfo struct {
 	DataNodeGrpcClients map[string]*client.DataGrpcClientWrapper `json:"-"`
 }
 
+func (c *ClusterInfo) GetDataNodeGrpcClient(dataNodeId string, dataNodeUrl string) (*client.DataGrpcClientWrapper, error) {
+	// TODO check dataNodeUrl argument
+	if _, ok := c.DataNodeGrpcClients[dataNodeId]; ok {
+		return c.DataNodeGrpcClients[dataNodeId], nil
+	}
+	c.DataNodeGrpcClients[dataNodeId] = client.NewDataGrpcClient(dataNodeUrl)
+	return c.DataNodeGrpcClients[dataNodeId], nil
+}
+
 func (c *ClusterInfo) AddNewDataNode(info *pb.DataNodeInfo) error {
 	info.LastHeartBeatAt = timestamppb.New(time.Now())
 	if _, ok := c.Nodes[info.Id]; ok {
