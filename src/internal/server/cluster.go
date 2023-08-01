@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/client"
 	pb "github.com/ADA-GWU/guidedresearchproject-hnijad/internal/proto/primary"
 	log "github.com/sirupsen/logrus"
@@ -45,6 +46,7 @@ func (c *ClusterInfo) FindVolumeWithMaxAvailableSpace() *VolumeResult {
 	freeSpace := int64(-1)
 	volumeID := int32(-1)
 	dataNodeUrl := ""
+	httpPort := ""
 
 	for _, val := range c.Nodes {
 		for _, volume := range val.Volumes {
@@ -52,13 +54,14 @@ func (c *ClusterInfo) FindVolumeWithMaxAvailableSpace() *VolumeResult {
 				freeSpace = volume.FreeSpace
 				volumeID = volume.Id
 				dataNodeUrl = val.Address
+				httpPort = val.HttpPort
 			}
 		}
 	}
 	log.Infoln("FindVolumeWithMaxAvailableSpace end")
 
 	return &VolumeResult{
-		DataNodeUrl: dataNodeUrl,
+		DataNodeUrl: fmt.Sprintf("%v:%v", dataNodeUrl, httpPort),
 		Id:          volumeID,
 	}
 }
