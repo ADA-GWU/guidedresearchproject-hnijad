@@ -62,3 +62,14 @@ func (c *ClusterInfo) FindVolumeWithMaxAvailableSpace() *VolumeResult {
 		Id:          volumeID,
 	}
 }
+
+func (c *ClusterInfo) findDataNodeWithVolumeID(volumeId int32) *pb.DataNodeInfo {
+	for _, val := range c.Nodes {
+		for _, volume := range val.Volumes {
+			if volume.Id == volumeId {
+				return val
+			}
+		}
+	}
+	return nil
+}
