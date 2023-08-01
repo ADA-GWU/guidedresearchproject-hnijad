@@ -110,7 +110,7 @@ func asVolumeList(volumeMap map[int]*storage.Volume) []*pb.Volume {
 		volume := &pb.Volume{
 			Id:        int32(value.ID),
 			Dir:       value.Dir,
-			UsedSpace: 12,
+			UsedSpace: value.UsedSpace,
 			FreeSpace: 12,
 		}
 		volumes = append(volumes, volume)

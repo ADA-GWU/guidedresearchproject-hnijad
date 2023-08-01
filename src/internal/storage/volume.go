@@ -55,7 +55,7 @@ func (v *Volume) WriteNeedle(needle *Needle) error {
 	if err == nil {
 		v.NeedleMap[int(needle.Id)] = &NeedleInfo{
 			Offset: v.UsedSpace,
-			Size:   sz,
+			Size:   uint32(sz),
 			Name:   string(needle.Name),
 		}
 		v.UsedSpace += int64(sz)
@@ -93,7 +93,7 @@ func (v *Volume) syncNeedleMap() {
 		offset += int64(at)
 		v.NeedleMap[int(needle.Id)] = &NeedleInfo{
 			Offset: needleOffset,
-			Size:   12,
+			Size:   needle.TotalSize,
 			Name:   string(needle.Name),
 		}
 	}
