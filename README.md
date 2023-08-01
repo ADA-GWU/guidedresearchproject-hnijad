@@ -34,7 +34,7 @@ To start the primary node run the following command
 
 To start to data node run the following command
 ```shell
-./sos data --vol_dir="tmp/node1" --primary_node="localhost:1212" --port="8081" --node_id="1"
+./sos data --vol_dir="tmp/node1" --primary_node="localhost:1234" --port="8081" --grpc_port="1235"  --node_id="1"
 ```
 
 
