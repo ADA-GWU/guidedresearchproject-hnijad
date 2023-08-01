@@ -19,6 +19,12 @@ func (h *PrimaryNodeHandler) findAvailableDataNode(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, res)
 }
 
+func (h *PrimaryNodeHandler) findDataNodeByObjectId(ctx echo.Context) error {
+	objectId := ctx.QueryParam("id")
+	res, _ := h.PrimaryServer.FindDataNodeByObjectId(objectId)
+	return ctx.JSON(http.StatusOK, res)
+}
+
 func AddPrimaryRoutes(e *echo.Echo, server *server.PrimaryServer) {
 	handler := &PrimaryNodeHandler{
 		PrimaryServer: server,
@@ -26,4 +32,5 @@ func AddPrimaryRoutes(e *echo.Echo, server *server.PrimaryServer) {
 
 	e.GET("/primary/cluster-info", handler.getClusterInfo)
 	e.GET("/primary/volume", handler.findAvailableDataNode)
+	e.GET("/primary/search", handler.findDataNodeByObjectId)
 }
