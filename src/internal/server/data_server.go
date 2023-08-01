@@ -7,7 +7,9 @@ import (
 	"github.com/ADA-GWU/guidedresearchproject-hnijad/internal/storage"
 	log "github.com/sirupsen/logrus"
 	"mime/multipart"
+	"net"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -93,7 +95,7 @@ func (ds *DataServer) StartHeartBeat() {
 				log.Infoln("Heartbeat at", ticker)
 				info := &pb.DataNodeInfo{
 					Id:       ds.ID,
-					Address:  "localhost",
+					Address:  getOutboundUp(),
 					Volumes:  asVolumeList(ds.Storage.Volumes),
 					HttpPort: ds.Params.HttpPort,
 					GrpcPort: ds.Params.GRPCPort,
@@ -102,6 +104,18 @@ func (ds *DataServer) StartHeartBeat() {
 			}
 		}
 	}()
+}
+
+func getOutboundUp() string {
+	conn, err := net.Dial("udp", "8.8.8.8:80")
+	if err != nil {
+		log.Errorln("Error getting outbound IP:", err)
+		os.Exit(1)
+	}
+	defer conn.Close()
+
+	localAddr := conn.LocalAddr().(*net.UDPAddr).IP.String()
+	return localAddr
 }
 
 func asVolumeList(volumeMap map[int]*storage.Volume) []*pb.Volume {
