@@ -1,16 +1,16 @@
 #!/bin/bash
 
-OBJ_PATH="/Users/hnijad/Desktop/lab/TestObjects"
-BASE_URL="http://127.0.0.1:8080/data"
+OBJ_PATH="/Users/hnijad/Desktop/lab/read-test/"
+BASE_URL="http://127.0.0.1:8081/data"
 
-i=10
+i=0
 
 for file in "$OBJ_PATH"/*; do
   ((i++))
   if [ -f "$file" ]; then
-    id="1,$i"
+    id="16,$i"
     #echo "Processing file: $(basename $file) id = $id"
-    echo "$BASE_URL/$id"
-    curl -F "file=@$file" "$BASE_URL/$id" &
+    #echo "$BASE_URL/$id"
+    curl -s -F "file=@$file" "$BASE_URL/$id" > /dev/null
   fi
 done
