@@ -91,8 +91,8 @@ func (ds *DataServer) StartHeartBeat() {
 	go func() {
 		for {
 			select {
-			case ticker := <-ticker.C:
-				log.Infoln("Heartbeat at", ticker)
+			case <-ticker.C:
+				//log.Infoln("Heartbeat at", ticker)
 				info := &pb.DataNodeInfo{
 					Id:       ds.ID,
 					Address:  getOutboundUp(),

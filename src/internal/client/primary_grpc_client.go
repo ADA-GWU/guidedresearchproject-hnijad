@@ -25,7 +25,7 @@ func NewMasterGrpcClient(primaryUrl string) *PrimaryGrpcClientWrapper {
 }
 
 func (s *PrimaryGrpcClientWrapper) HeartBeat(info *pb.DataNodeInfo) {
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	_, err := s.masterGrpcClient.HeartBeat(ctx, info)
 	if err != nil {

@@ -59,7 +59,7 @@ func (v *Volume) WriteNeedle(needle *Needle) error {
 			Name:   string(needle.Name),
 		}
 		v.UsedSpace += int64(sz)
-		log.Infof("id = %v, offset = %v ", needle.Id, v.NeedleMap[int(needle.Id)].Name)
+		//log.Infof("id = %v, offset = %v ", needle.Id, v.NeedleMap[int(needle.Id)].Name)
 	}
 	return err
 }
@@ -142,7 +142,7 @@ func (v *Volume) ReadNeedle(needleId int) (*Needle, error) {
 }
 
 func (v *Volume) FindNeedle(needleId int) (*Needle, error) {
-	log.Infof("Find needle with id = %d\n", needleId)
+	//log.Infof("Find needle with id = %d\n", needleId)
 	if _, ok := v.NeedleMap[needleId]; !ok {
 		log.Warningf("Needle with id=%d was not found", needleId)
 		return nil, errors.New(fmt.Sprintf("Needle with id=%d was not found", needleId))
