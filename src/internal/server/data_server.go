@@ -33,7 +33,7 @@ func (ds *DataServer) CreateNewVolume(id int) error {
 }
 
 func (ds *DataServer) WriteObject(fid string, fileName string, file multipart.File, bytes []byte) error {
-	log.Infoln(fid, fileName)
+	//log.Infoln(fid, fileName)
 
 	tokens := strings.Split(fid, ",")
 	vId, _ := strconv.Atoi(tokens[0])
